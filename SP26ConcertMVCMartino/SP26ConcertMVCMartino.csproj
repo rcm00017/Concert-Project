@@ -15,4 +15,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.13" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SP26ConcertClassLibraryMartino\SP26ConcertClassLibraryMartino.csproj" />
+  </ItemGroup>
+
 </Project>

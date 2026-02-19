@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -35,6 +36,11 @@ namespace SP26ConcertClassLibraryMartino
         public VenueType VenueType { get; set; }
         [Required]
         public int Capacity { get; set; }
+
+        //MANY = LIST relationship between tables
+        public List<Event> Events { get; set; } = new List<Event>();
+
+        //LIST = NULL or EMPTY
 
 
         //Helper Property
