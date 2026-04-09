@@ -45,6 +45,7 @@ namespace SP26ConcertClassLibraryMartino
                 }
             }
         }
+        public List<Ticket> Tickets { get; set; } = new List<Ticket>();
         public AppUser(string email, string password, string firstName, string lastName)
         {
            this.FirstName = firstName;
@@ -55,6 +56,13 @@ namespace SP26ConcertClassLibraryMartino
 
             //passwords are stored as hashes
             //hashes = variable length input -> fixed length output
+            PasswordHasher<AppUser> hasher = new PasswordHasher<AppUser>();
+            this.PasswordHash = hasher.HashPassword(this, password);
+
+            //GUID
+            //Globally Unique Identifier
+            //8-4-4-12
+            this.SecurityStamp = new Guid().ToString();
         }
         public AppUser()
         {

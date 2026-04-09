@@ -8,6 +8,10 @@ namespace SP26ConcertMVCMartino.Data
     {
         public DbSet<Venue> Venues { get; set; }
         public DbSet<Event> Events { get; set; }
+        public DbSet<AppUser> AppUsers { get; set; }
+
+        public DbSet<Ticket> Tickets { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

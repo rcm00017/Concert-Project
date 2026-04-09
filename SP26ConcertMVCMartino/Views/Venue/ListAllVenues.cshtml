@@ -1,0 +1,48 @@
+﻿@using SP26ConcertClassLibraryMartino
+@model IEnumerable<Venue>
+@{
+    ViewData["Title"] = "ListAllVenues";
+}
+
+<h1>List All Venues</h1>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Venue Name</th>
+            <th>Address</th>
+            <th>Type</th>
+            <th>Capacity</th>
+            <th>Next Event</th>
+            <th># of Events</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Venue currentVenue in Model)
+        {
+            <tr>
+                <td>
+                    @currentVenue.VenueName
+                </td>
+                <td> @currentVenue.AddressFriendlyName</td>
+                <td>@currentVenue.VenueType</td>
+                <td>@currentVenue.Capacity</td>
+                @if (currentVenue.Events.Where(e => e.DateTime >= DateTime.Now).Any())
+                {
+                    <td>@currentVenue.Events.Where(e => e.DateTime >= DateTime.Now).OrderBy(e => e.DateTime).First().EventName - @currentVenue.Events.Where(e => e.DateTime >= DateTime.Now).OrderBy(e => e.DateTime).First().DateTime</td>
+
+                }
+                else
+                {
+                    <td>No upcoming events!</td>
+                }
+                <td>@currentVenue.Events.Count </td>
+            </tr>
+        }
+        <tr>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+</table>
+

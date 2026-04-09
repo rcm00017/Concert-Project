@@ -26,6 +26,8 @@ namespace SP26ConcertClassLibraryMartino
         [Required]
         public Venue Venue { get; set; }
 
+        public List<Ticket> Tickets { get; set; } = new List<Ticket>();
+
         public Event(Venue venue, string eventName, DateTime? dateTime, bool openSeatingAvailable, decimal generalAdmissionPrice)
         {
             this.Venue = venue;

@@ -86,6 +86,11 @@ namespace SP26ConcertMVCMartino.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -137,6 +142,10 @@ namespace SP26ConcertMVCMartino.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasDiscriminator().HasValue("IdentityUser");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -255,6 +264,36 @@ namespace SP26ConcertMVCMartino.Data.Migrations
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("SP26ConcertClassLibraryMartino.Ticket", b =>
+                {
+                    b.Property<int>("TicketID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TicketID"));
+
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("EventID")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Paid")
+                        .HasColumnType("bit");
+
+                    b.HasKey("TicketID");
+
+                    b.HasIndex("AppUserId");
+
+                    b.HasIndex("EventID");
+
+                    b.ToTable("Tickets");
+                });
+
             modelBuilder.Entity("SP26ConcertClassLibraryMartino.Venue", b =>
                 {
                     b.Property<int>("VenueID")
@@ -299,6 +338,39 @@ namespace SP26ConcertMVCMartino.Data.Migrations
                     b.HasKey("VenueID");
 
                     b.ToTable("Venues");
+                });
+
+            modelBuilder.Entity("SP26ConcertClassLibraryMartino.AppUser", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
+
+                    b.Property<string>("AddressLine1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AddressLine2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PostalCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasDiscriminator().HasValue("AppUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -363,9 +435,38 @@ namespace SP26ConcertMVCMartino.Data.Migrations
                     b.Navigation("Venue");
                 });
 
+            modelBuilder.Entity("SP26ConcertClassLibraryMartino.Ticket", b =>
+                {
+                    b.HasOne("SP26ConcertClassLibraryMartino.AppUser", "AppUser")
+                        .WithMany("Tickets")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SP26ConcertClassLibraryMartino.Event", "Event")
+                        .WithMany("Tickets")
+                        .HasForeignKey("EventID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Event");
+                });
+
+            modelBuilder.Entity("SP26ConcertClassLibraryMartino.Event", b =>
+                {
+                    b.Navigation("Tickets");
+                });
+
             modelBuilder.Entity("SP26ConcertClassLibraryMartino.Venue", b =>
                 {
                     b.Navigation("Events");
+                });
+
+            modelBuilder.Entity("SP26ConcertClassLibraryMartino.AppUser", b =>
+                {
+                    b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618
         }
