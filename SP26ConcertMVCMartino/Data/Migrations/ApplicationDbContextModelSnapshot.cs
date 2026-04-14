@@ -22,6 +22,21 @@ namespace SP26ConcertMVCMartino.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ArtistEvent", b =>
+                {
+                    b.Property<int>("ArtistsArtistID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EventsEventID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ArtistsArtistID", "EventsEventID");
+
+                    b.HasIndex("EventsEventID");
+
+                    b.ToTable("ArtistEvent");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -233,6 +248,27 @@ namespace SP26ConcertMVCMartino.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("SP26ConcertClassLibraryMartino.Artist", b =>
+                {
+                    b.Property<int>("ArtistID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ArtistID"));
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ArtistID");
+
+                    b.ToTable("Artists");
+                });
+
             modelBuilder.Entity("SP26ConcertClassLibraryMartino.Event", b =>
                 {
                     b.Property<int>("EventID")
@@ -371,6 +407,21 @@ namespace SP26ConcertMVCMartino.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("AppUser");
+                });
+
+            modelBuilder.Entity("ArtistEvent", b =>
+                {
+                    b.HasOne("SP26ConcertClassLibraryMartino.Artist", null)
+                        .WithMany()
+                        .HasForeignKey("ArtistsArtistID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SP26ConcertClassLibraryMartino.Event", null)
+                        .WithMany()
+                        .HasForeignKey("EventsEventID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -11,6 +11,7 @@ namespace SP26ConcertMVCMartino.Data
         public DbSet<AppUser> AppUsers { get; set; }
 
         public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<Artist> Artists { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

@@ -36,6 +36,16 @@ namespace SP26ConcertMVCMartino.Controllers
                 events = events.Where(e => e.DateTime.Value.Date == viewModel.DateTime.Value.Date).ToList();
             }
 
+            if (!String.IsNullOrEmpty(viewModel.EventName))
+            {
+               events = events.Where(e => e.EventName.ToLower().Contains(viewModel.EventName.ToLower().Trim())).ToList();
+            }
+
+            if (viewModel.ArtistID != null)
+            {
+                events = events.Where(e => e.Artists.Any(a => a.ArtistID == viewModel.ArtistID)).ToList();
+            }
+
             //Sort by closest event
             events = events.OrderByDescending(e => e.DateTime).ToList();
 
