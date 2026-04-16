@@ -25,6 +25,7 @@ namespace SP26ConcertClassLibraryMartino
         }
 
         public List<Event> Events { get; set; } = new List<Event>();
+        public List<Genre> Genres { get; set; } = new List<Genre>();
         public Artist(string first, string last)
         {
             this.FirstName = first;

@@ -37,6 +37,21 @@ namespace SP26ConcertMVCMartino.Data.Migrations
                     b.ToTable("ArtistEvent");
                 });
 
+            modelBuilder.Entity("ArtistGenre", b =>
+                {
+                    b.Property<int>("ArtistsArtistID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GenresGenreID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ArtistsArtistID", "GenresGenreID");
+
+                    b.HasIndex("GenresGenreID");
+
+                    b.ToTable("ArtistGenre");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -300,6 +315,23 @@ namespace SP26ConcertMVCMartino.Data.Migrations
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("SP26ConcertClassLibraryMartino.Genre", b =>
+                {
+                    b.Property<int>("GenreID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GenreID"));
+
+                    b.Property<string>("GenreName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("GenreID");
+
+                    b.ToTable("Genres");
+                });
+
             modelBuilder.Entity("SP26ConcertClassLibraryMartino.Ticket", b =>
                 {
                     b.Property<int>("TicketID")
@@ -420,6 +452,21 @@ namespace SP26ConcertMVCMartino.Data.Migrations
                     b.HasOne("SP26ConcertClassLibraryMartino.Event", null)
                         .WithMany()
                         .HasForeignKey("EventsEventID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ArtistGenre", b =>
+                {
+                    b.HasOne("SP26ConcertClassLibraryMartino.Artist", null)
+                        .WithMany()
+                        .HasForeignKey("ArtistsArtistID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SP26ConcertClassLibraryMartino.Genre", null)
+                        .WithMany()
+                        .HasForeignKey("GenresGenreID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

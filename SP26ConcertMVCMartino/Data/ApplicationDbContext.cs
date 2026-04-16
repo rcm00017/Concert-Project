@@ -13,6 +13,8 @@ namespace SP26ConcertMVCMartino.Data
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Artist> Artists { get; set; }
 
+        public DbSet<Genre> Genres { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
