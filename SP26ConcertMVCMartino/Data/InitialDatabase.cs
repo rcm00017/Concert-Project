@@ -36,13 +36,29 @@ namespace SP26ConcertMVCMartino.Data
                 database.SaveChanges();
 
             }
-            if (database.Tickets.Any())
+            if (!database.Tickets.Any())
             {
                 AppUser customer = database.AppUsers.Where(a => a.Email == "Test.Customer1@test.com").First();
 
                 Event @event = database.Events.First();
 
                 Ticket ticket = new Ticket(customer, @event, true, 200);
+
+                database.SaveChanges();
+            }
+            if (!database.Artists.Any())
+            {
+                Artist artist = new Artist("Cody", "Jinks");
+                database.Artists.Add(artist);
+
+                database.SaveChanges();
+                artist = new Artist("Kedrick", "Lemar");
+                database.Artists.Add(artist);
+
+                database.SaveChanges();
+
+                artist = new Artist("Colter", "Wall");
+                database.Artists.Add(artist);
 
                 database.SaveChanges();
             }

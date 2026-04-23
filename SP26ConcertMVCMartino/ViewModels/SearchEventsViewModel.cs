@@ -1,7 +1,7 @@
 ﻿using SP26ConcertClassLibraryMartino;
 using System.ComponentModel.DataAnnotations;
 
-namespace SP26ConcertMVCMartino.Models.ViewModels
+namespace SP26ConcertMVCMartino.ViewModels
 {
     public class SearchEventsViewModel
     {
@@ -15,7 +15,7 @@ namespace SP26ConcertMVCMartino.Models.ViewModels
         public int? VenueID { get; set; }
 
         //Result
-        public List<Event> SearchResult { get; set; } = new List<Event>();
+        public List<Event> SearchResult { get; set; }
 
     }
 }

@@ -3,7 +3,7 @@ using Moq;
 using SP26ConcertClassLibraryMartino;
 using SP26ConcertMVCMartino.Controllers;
 using SP26ConcertMVCMartino.Models;
-using SP26ConcertMVCMartino.Models.ViewModels;
+using SP26ConcertMVCMartino.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +16,13 @@ namespace SP26ConcertTestMartino
     {
         private Mock<IEventRepo> mockEventRepo;
         private EventController controller;
+        private Mock<IArtistRepo> mockArtistRepo;
 
         public EventTest()
         {
             this.mockEventRepo = new Mock<IEventRepo>();
-            this.controller = new EventController(mockEventRepo.Object);
+            this.mockArtistRepo = new Mock<IArtistRepo>();
+            this.controller = new EventController(mockEventRepo.Object, mockArtistRepo.Object);
         }
         [Fact]
         public void ShouldSearchEvents()

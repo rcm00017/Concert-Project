@@ -1,31 +1,42 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using SP26ConcertClassLibraryMartino;
 using SP26ConcertMVCMartino.Models;
-using SP26ConcertMVCMartino.Models.ViewModels;
+using SP26ConcertMVCMartino.ViewModels;
 
 namespace SP26ConcertMVCMartino.Controllers
 {
     public class EventController : Controller
     {
         private IEventRepo iEventRepo;
+        private IArtistRepo iArtistRepo;
 
-        public EventController(IEventRepo eventRepo)
+
+        public EventController(IEventRepo eventRepo, IArtistRepo artistRepo)
         {
             this.iEventRepo = eventRepo;
+            this.iArtistRepo = artistRepo;
         }
         [HttpGet]
         public IActionResult SearchEvents()
         {
             //Create a blank form and send to user
             SearchEventsViewModel viewModel = new SearchEventsViewModel();
+            //populate dropdown of artists
+            this.iArtistRepo.GetAllArtists();
+
+
+            ViewData["ArtistDropdown"] = new SelectList(this.iArtistRepo.GetAllArtists(), "ArtistID", "FullName");
+
             return View(viewModel);
-            return View();
+            
         }
         //Search Button
         [HttpPost]
         //parameters are inputs
         public IActionResult SearchEvents(SearchEventsViewModel viewModel)
         {
+
             //collect inputs
             List<Event> events = this.iEventRepo.GetAllEvents();
 
@@ -55,7 +66,7 @@ namespace SP26ConcertMVCMartino.Controllers
             }
 
             //Sort by closest event
-            events = events.OrderByDescending(e => e.DateTime).ToList();
+            events = events.OrderBy(e => e.DateTime).ToList();
 
             //Return results
             viewModel.SearchResult = events; 
