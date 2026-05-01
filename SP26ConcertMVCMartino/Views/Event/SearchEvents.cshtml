@@ -7,34 +7,63 @@
 
 <h1>Search Events</h1>
 
-<form asp-controller="Event" asp-action="SearchEvents" method="post">
-    <div class="form-group">
-        <label class="form-label"> Date Time</label>
-        <input class="form-control" asp-for="DateTime" />
+<form asp-controller="Event" asp-action="SearchEventsResult" method="get">
+    <div class="row">
+         <div class="form-group" col-md-4>
+            <label class="form-label"> Date Time</label>
+            <input class="form-control" asp-for="DateTime" />
 
+        </div>
+
+         <div class="form-group" col-md-8>
+            <label class="form-label"> Event Name</label>
+             <input class="form-control" asp-for="EventName" />
+
+         </div>
     </div>
+    
 
-    <div class="form-group">
-        <label class="form-label"> Event Name</label>
-        <input class="form-control" asp-for="EventName" />
-
-    </div>
-
-    <div class="form-group">
-        <label class="form-label"> Artist</label>
-        <select class="form-control" asp-for="ArtistID" asp-items="@ViewBag.ArtistDropdown">
+    <div class="row">
+        <div class="form-group" col-md-4>
+             <label class="form-label"> Artist</label>
+             <select class="form-control" asp-for="ArtistID" asp-items="@ViewBag.ArtistDropdown">
             <option value=null> None Selected</option>
             </select>
 
 
+         </div>
+        <div class="form-group" col-md-4>
+             <label class="form-label"> Venue</label>
+             <select class="form-control" asp-for="VenueID" asp-items="@ViewBag.VenueDropdown">
+            <option value=null> None Selected</option>
+            </select>
+
+
+        </div>
+        <div class="form-group" col-md-4>
+             <label class="form-label"> Genre</label>
+             <select class="form-control" asp-for="GenreID" asp-items="@ViewBag.GenreDropdown">
+            <option value=null> None Selected</option>
+            </select>
+
+
+         </div>
     </div>
+   
+
+    <br/>
 
 
     <button class="btn btn-primary" type="submit">Search</button>
 
+
+
 </Form>
 
 @if(Model.SearchResult != null){
+    <br/>
+    <hr/>
+    <br/>
 @if(Model.SearchResult.Any()){
 <table class="table table-bordered table-striped">
 
@@ -42,6 +71,7 @@
         <tr>
         <th> Date Time</th>
         <th> Event Name</th>
+        <th>Artist(s)</th>
         </tr>
     </thead>
     <tbody>
@@ -58,6 +88,29 @@
 
                 }
                 <td>@currentEvent.EventName</td>
+                        <td>
+                            @if (currentEvent.Artists.Any())
+                            {
+                                <ul>
+                                @foreach (Artist artist in @currentEvent.Artists)
+                            {
+                             <li> @artist.FullName</li>
+                            }
+                                </ul>
+                            
+                            }
+                            else
+                            {
+                                <span>Artist TBD</span>
+                            }
+                        </td>
+                        <td>
+                            <p>@currentEvent.Venue.VenueName</p>
+                            <p>@currentEvent.Venue.AddressFriendlyName</p>
+
+                        </td>
+                        
+                        
             </tr>
         }
 
@@ -67,7 +120,7 @@
     }
     else
     {
-     <p>No Search Results</p>   
+     <h3 class="text-danger">No Search Results</h3>   
     }
 }
 

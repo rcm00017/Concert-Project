@@ -1,4 +1,5 @@
-﻿using SP26ConcertClassLibraryMartino;
+﻿using Microsoft.EntityFrameworkCore;
+using SP26ConcertClassLibraryMartino;
 using SP26ConcertMVCMartino.Data;
 
 namespace SP26ConcertMVCMartino.Models
@@ -13,7 +14,7 @@ namespace SP26ConcertMVCMartino.Models
         }
         public List<Event> GetAllEvents()
         {
-           return database.Events.ToList();
+            return database.Events.Include(e => e.Artists).ThenInclude(a => a.Genres).Include(e => e.Venue).ToList();
         }
     }
 }

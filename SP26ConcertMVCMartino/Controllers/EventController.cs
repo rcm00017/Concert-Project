@@ -10,12 +10,25 @@ namespace SP26ConcertMVCMartino.Controllers
     {
         private IEventRepo iEventRepo;
         private IArtistRepo iArtistRepo;
+        private IVenueRepo iVenueRepo;
+        private IGenreRepo iGenreRepo;
 
 
-        public EventController(IEventRepo eventRepo, IArtistRepo artistRepo)
+        public EventController(IEventRepo eventRepo, IArtistRepo artistRepo, IVenueRepo venueRepo, IGenreRepo iGenreRepo)
         {
             this.iEventRepo = eventRepo;
             this.iArtistRepo = artistRepo;
+            this.iVenueRepo = venueRepo;
+            this.iGenreRepo = iGenreRepo;
+        }
+
+        public void CreateDropdowns()
+        {
+            ViewData["ArtistDropdown"] = new SelectList(this.iArtistRepo.GetAllArtists(), "ArtistID", "FullName");
+            ViewData["VenueDropdown"] = new SelectList(this.iVenueRepo.GetAllVenues(), "VenueID", "VenueName");
+            ViewData["GenreDropdown"] = new SelectList(this.iGenreRepo.GetAllGenres(), "GenreID", "GenreName");
+
+
         }
         [HttpGet]
         public IActionResult SearchEvents()
@@ -23,18 +36,17 @@ namespace SP26ConcertMVCMartino.Controllers
             //Create a blank form and send to user
             SearchEventsViewModel viewModel = new SearchEventsViewModel();
             //populate dropdown of artists
-            this.iArtistRepo.GetAllArtists();
 
+            CreateDropdowns();
 
-            ViewData["ArtistDropdown"] = new SelectList(this.iArtistRepo.GetAllArtists(), "ArtistID", "FullName");
 
             return View(viewModel);
             
         }
         //Search Button
-        [HttpPost]
+        //[HttpPost]
         //parameters are inputs
-        public IActionResult SearchEvents(SearchEventsViewModel viewModel)
+        public IActionResult SearchEventsResult(SearchEventsViewModel viewModel)
         {
 
             //collect inputs
@@ -70,7 +82,7 @@ namespace SP26ConcertMVCMartino.Controllers
 
             //Return results
             viewModel.SearchResult = events; 
-            return View(viewModel);
+            return View("SearchEvents", viewModel);
         }
     }
 }

@@ -35,7 +35,23 @@
                 {
                     <td>No upcoming events!</td>
                 }
-                <td>@currentVenue.Events.Count </td>
+                
+
+                    
+                
+                <td>
+                    @if (currentVenue.Events.Any())
+                    { 
+                    <a class="btn btn-outline-primary" asp-controller="Event" asp-action="SearchEventsResult" asp-route-VenueID="@currentVenue.VenueID">@currentVenue.Events.Count</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-outline-primary disabled" asp-controller="Event" asp-action="SearchEventsResult" asp-route-VenueID="@currentVenue.VenueID">@currentVenue.Events.Count</a>
+                    }
+
+                    
+                    
+                </td>
             </tr>
         }
         <tr>

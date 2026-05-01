@@ -15,14 +15,19 @@ namespace SP26ConcertTestMartino
     public class EventTest
     {
         private Mock<IEventRepo> mockEventRepo;
-        private EventController controller;
         private Mock<IArtistRepo> mockArtistRepo;
+        private Mock<IVenueRepo> mockVenueRepo;
+        private Mock<IGenreRepo> mockGenreRepo;
+        private EventController controller;
+
 
         public EventTest()
         {
             this.mockEventRepo = new Mock<IEventRepo>();
             this.mockArtistRepo = new Mock<IArtistRepo>();
-            this.controller = new EventController(mockEventRepo.Object, mockArtistRepo.Object);
+            this.mockVenueRepo = new Mock<IVenueRepo>();
+            this.mockGenreRepo = new Mock<IGenreRepo>();
+            this.controller = new EventController(mockEventRepo.Object, mockArtistRepo.Object, mockVenueRepo.Object, mockGenreRepo.Object);
         }
         [Fact]
         public void ShouldSearchEvents()
@@ -37,9 +42,11 @@ namespace SP26ConcertTestMartino
 
 
             this.mockEventRepo.Setup(m => m.GetAllEvents()).Returns(CreateMockEvents());
+            this.mockArtistRepo.Setup(m => m.GetAllArtists()).Returns(new List<Artist>());
+            this.mockVenueRepo.Setup(m => m.GetAllVenues()).Returns(new List<Venue>());
 
             //Act
-            this.controller.SearchEvents(viewModel);
+            this.controller.SearchEventsResult(viewModel);
             
 
             //Assert
@@ -60,9 +67,14 @@ namespace SP26ConcertTestMartino
 
 
             this.mockEventRepo.Setup(m => m.GetAllEvents()).Returns(CreateMockEvents());
+            this.mockArtistRepo.Setup(m => m.GetAllArtists()).Returns(new List<Artist>());
+            this.mockVenueRepo.Setup(m => m.GetAllVenues()).Returns(new List<Venue>());
+            this.mockGenreRepo.Setup(m => m.GetAllGenres()).Returns(new List<Genre>());
+
+
 
             //Act
-            this.controller.SearchEvents(viewModel);
+            this.controller.SearchEventsResult(viewModel);
 
 
             //Assert
@@ -84,7 +96,7 @@ namespace SP26ConcertTestMartino
             this.mockEventRepo.Setup(m => m.GetAllEvents()).Returns(CreateMockEvents());
 
             //Act
-            this.controller.SearchEvents(viewModel);
+            this.controller.SearchEventsResult(viewModel);
 
 
             //Assert
@@ -106,7 +118,7 @@ namespace SP26ConcertTestMartino
             this.mockEventRepo.Setup(m => m.GetAllEvents()).Returns(CreateMockEvents());
 
             //Act
-            this.controller.SearchEvents(viewModel);
+            this.controller.SearchEventsResult(viewModel);
 
 
             //Assert
@@ -128,7 +140,7 @@ namespace SP26ConcertTestMartino
             this.mockEventRepo.Setup(m => m.GetAllEvents()).Returns(CreateMockEvents());
 
             //Act
-            this.controller.SearchEvents(viewModel);
+            this.controller.SearchEventsResult(viewModel);
 
 
             //Assert

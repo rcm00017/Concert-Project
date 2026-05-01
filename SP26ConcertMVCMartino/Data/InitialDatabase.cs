@@ -25,30 +25,11 @@ namespace SP26ConcertMVCMartino.Data
                 database.SaveChanges();
 
             }
-            if (!database.Events.Any())
-            {
-                Venue venue = database.Venues.Where(v => v.VenueName == "Venue1").First();
-                Event @event = new Event(venue, "Event1", new DateTime(2026, 05, 05), true, 100);
-                database.Events.Add(@event);
-                @event = new Event(venue, "Event2", new DateTime(2026, 06, 06), true, 0);
-                database.Events.Add(@event);
-
-                database.SaveChanges();
-
-            }
-            if (!database.Tickets.Any())
-            {
-                AppUser customer = database.AppUsers.Where(a => a.Email == "Test.Customer1@test.com").First();
-
-                Event @event = database.Events.First();
-
-                Ticket ticket = new Ticket(customer, @event, true, 200);
-
-                database.SaveChanges();
-            }
             if (!database.Artists.Any())
             {
                 Artist artist = new Artist("Cody", "Jinks");
+                Genre genre = database.Genres.Where(g => g.GenreName == "Country").First();
+                artist.Genres.Add(genre);
                 database.Artists.Add(artist);
 
                 database.SaveChanges();
@@ -62,6 +43,42 @@ namespace SP26ConcertMVCMartino.Data
 
                 database.SaveChanges();
             }
+            if (!database.Events.Any())
+            {
+                Venue venue = database.Venues.Where(v => v.VenueName == "Venue1").First();
+
+                Event @event = new Event(venue, "Event1", new DateTime(2026, 05, 05), true, 100);
+                database.Events.Add(@event);
+                Artist artist = database.Artists.First();
+                @event.Artists.Add(artist);
+                @event = new Event(venue, "Event2", new DateTime(2026, 06, 06), true, 0);
+                @event.Artists.Add(artist);
+                artist = database.Artists.Where(a => a.FullName == "Colter" && a.LastName == "Wall").First();
+                @event.Artists.Add(artist);
+
+                database.Events.Add(@event);
+
+                database.SaveChanges();
+
+            }
+            
+            if (!database.Genres.Any())
+            {
+                Genre genre = new Genre("Country");
+                database.Genres.Add(genre);
+                database.SaveChanges();
+            }
+            if (!database.Tickets.Any())
+            {
+                AppUser customer = database.AppUsers.Where(a => a.Email == "Test.Customer1@test.com").First();
+
+                Event @event = database.Events.First();
+
+                Ticket ticket = new Ticket(customer, @event, true, 200);
+
+                database.SaveChanges();
+            }
+            
 
         }
             
