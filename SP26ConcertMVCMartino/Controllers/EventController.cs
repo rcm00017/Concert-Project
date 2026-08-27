@@ -84,5 +84,64 @@ namespace SP26ConcertMVCMartino.Controllers
             viewModel.SearchResult = events; 
             return View("SearchEvents", viewModel);
         }
-    }
-}
+
+        //HTTP GET = READ
+        //HTTP POST = ADD
+        //HTTP PATCH = UPDATE
+        //HTTP DELETE = DELETE
+        //HTTP PUT = UPDATE
+        [HttpGet]
+        public IActionResult AddEvent()
+        {
+            //Present the user with a form
+            EventViewModel viewModel = new EventViewModel();
+            //User fills out the form    
+            return View(viewModel);
+        }
+        [HttpPost] // Submit Button
+        public IActionResult AddEvent(EventViewModel viewModel)
+        {
+            //Input Validation
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
+            
+
+
+                //Venue cannot have 2 events at the same time 
+
+                //Venue cannot have 2 events at the same time with the same name (duplicate)
+                List<Event> events = this.iEventRepo.GetAllEvents();
+            if (events.Any(e => e.Venue.VenueID == viewModel.VenueID && e.DateTime != null && e.DateTime == viewModel.DateTime))
+            {
+                //ERROR
+                ModelState.AddModelError("Duplicate", "An event at this location and date/time already exists!");
+                return View(viewModel);
+            }
+            //Event should not be in the past
+            if (viewModel.DateTime < DateTime.Now)
+            {
+                ModelState.AddModelError("EventPast", "The date/time of this event is in the past.");
+                return View(viewModel);
+            }
+
+            //Add Event or new record
+            decimal price = -1.0m;
+            if (viewModel.GeneralAdmissionPrice != null)
+            {
+                price = viewModel.GeneralAdmissionPrice.Value;
+            }
+            Venue venue = this.iVenueRepo.GetAllVenues().Where(v => v.VenueID == viewModel.VenueID).FirstOrDefault();
+
+            Event @event = new Event(venue, viewModel.EventName, viewModel.DateTime, viewModel.OpenSeatingAvailable, price);
+
+            //Save in DB
+            int eventID = this.iEventRepo.AddEvent(@event);
+
+
+            //Return a success
+            return RedirectToAction("SearchEvents");
+        }
+    }//Class
+}//Namespace

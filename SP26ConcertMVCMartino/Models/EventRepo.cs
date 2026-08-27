@@ -12,6 +12,15 @@ namespace SP26ConcertMVCMartino.Models
         {
             this.database = dbCentext;
         }
+
+        public int AddEvent(Event @event)
+        {
+            this.database.Events.Add(@event);
+            this.database.SaveChanges();
+
+            return @event.EventID;
+        }
+
         public List<Event> GetAllEvents()
         {
             return database.Events.Include(e => e.Artists).ThenInclude(a => a.Genres).Include(e => e.Venue).ToList();

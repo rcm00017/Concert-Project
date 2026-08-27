@@ -38,7 +38,7 @@ namespace SP26ConcertTestMartino
             SearchEventsViewModel viewModel = new SearchEventsViewModel();
             viewModel.DateTime = new DateTime(2026, 08, 22);
 
-            
+
 
 
             this.mockEventRepo.Setup(m => m.GetAllEvents()).Returns(CreateMockEvents());
@@ -47,7 +47,7 @@ namespace SP26ConcertTestMartino
 
             //Act
             this.controller.SearchEventsResult(viewModel);
-            
+
 
             //Assert
             Assert.Equal(expected, viewModel.SearchResult.Count);
@@ -63,7 +63,7 @@ namespace SP26ConcertTestMartino
             int expected = 1;
             SearchEventsViewModel viewModel = new SearchEventsViewModel();
             viewModel.EventName = "  CounTRy";
-            
+
 
 
             this.mockEventRepo.Setup(m => m.GetAllEvents()).Returns(CreateMockEvents());
@@ -182,6 +182,41 @@ namespace SP26ConcertTestMartino
 
 
             return events;
+        }
+
+        public List<Venue> CreateMockVenues()
+        {
+            List<Venue> venues = new List<Venue>();
+            Venue venue = new Venue();
+            venue.VenueID = 1;
+            venues.Add(venue);
+
+
+            venue = new Venue();
+            venue.VenueID = 2;
+            venues.Add(venue);
+
+            return venues;
+        }
+
+        [Fact] // Happy Path
+        public void ShouldAddEvent()
+        {
+            //Arrange
+            EventViewModel viewModel = new EventViewModel();
+            viewModel.EventName = "Test";
+            viewModel.VenueID = 1;
+            viewModel.DateTime = DateTime.Now.AddDays(1);
+            viewModel.OpenSeatingAvailable = true;
+
+            this.mockEventRepo.Setup(m => m.GetAllEvents()).Returns(CreateMockEvents());
+            this.mockVenueRepo.Setup(m => m.GetAllVenues()).Returns(CreateMockVenues());
+            //Act
+            this.controller.AddEvent(viewModel);
+
+            //Assert
+            this.mockEventRepo.Verify(m => m.AddEvent(It.IsAny<Event>()), Times.Once);
+
         }
     }
 }
