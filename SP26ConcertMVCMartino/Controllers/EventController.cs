@@ -91,10 +91,15 @@ namespace SP26ConcertMVCMartino.Controllers
         //HTTP DELETE = DELETE
         //HTTP PUT = UPDATE
         [HttpGet]
-        public IActionResult AddEvent()
+        public IActionResult AddEvent(int? VenueID)
         {
             //Present the user with a form
             EventViewModel viewModel = new EventViewModel();
+            if (VenueID.HasValue)
+            {
+                viewModel.VenueID = VenueID.Value;
+            }
+            CreateDropdowns();
             //User fills out the form    
             return View(viewModel);
         }
@@ -106,12 +111,13 @@ namespace SP26ConcertMVCMartino.Controllers
             {
                 return View(viewModel);
             }
+
+
+
+            //Venue cannot have 2 events at the same time 
+
+            //Venue cannot have 2 events at the same time with the same name (duplicate)
             
-
-
-                //Venue cannot have 2 events at the same time 
-
-                //Venue cannot have 2 events at the same time with the same name (duplicate)
                 List<Event> events = this.iEventRepo.GetAllEvents();
             if (events.Any(e => e.Venue.VenueID == viewModel.VenueID && e.DateTime != null && e.DateTime == viewModel.DateTime))
             {
@@ -122,7 +128,7 @@ namespace SP26ConcertMVCMartino.Controllers
             //Event should not be in the past
             if (viewModel.DateTime < DateTime.Now)
             {
-                ModelState.AddModelError("EventPast", "The date/time of this event is in the past.");
+                ModelState.AddModelError("EventPast", "The date/time of this event is in the past!");
                 return View(viewModel);
             }
 

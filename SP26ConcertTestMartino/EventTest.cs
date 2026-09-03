@@ -6,6 +6,7 @@ using SP26ConcertMVCMartino.Models;
 using SP26ConcertMVCMartino.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -130,7 +131,7 @@ namespace SP26ConcertTestMartino
         {
             //AAA
             //Arrange
-            int expected = 3;
+            int expected = 4;
             SearchEventsViewModel viewModel = new SearchEventsViewModel();
             viewModel.VenueID = 1;
 
@@ -158,6 +159,7 @@ namespace SP26ConcertTestMartino
             events.Add(new Event(venue, "Event1", new DateTime(2026, 08, 22), false, 100));
             events.Add(new Event(venue, "Event2", new DateTime(2026, 06, 21), false, 100));
             events.Add(new Event(venue, "Country Music Festival", null, false, 100));
+            events.Add(new Event(venue, "AddTestDuplicate", DateTime.Today.AddDays(1), false, 100m));
 
 
             venue = new Venue("Venue2", "add1", null, "City", "State", "Zip", "USA", VenueType.Indoor, 100);
@@ -211,12 +213,78 @@ namespace SP26ConcertTestMartino
 
             this.mockEventRepo.Setup(m => m.GetAllEvents()).Returns(CreateMockEvents());
             this.mockVenueRepo.Setup(m => m.GetAllVenues()).Returns(CreateMockVenues());
+
+            Event @event = null;
+            this.mockEventRepo.Setup(m => m.AddEvent(It.IsAny<Event>())).Callback<Event>(e => @event = e);
             //Act
             this.controller.AddEvent(viewModel);
 
             //Assert
             this.mockEventRepo.Verify(m => m.AddEvent(It.IsAny<Event>()), Times.Once);
+            Assert.Equal(viewModel.EventName, @event.EventName);
+            Assert.Equal(viewModel.DateTime, @event.DateTime);
+            Assert.Equal(viewModel.VenueID, @event.Venue.VenueID);
+            Assert.Equal(viewModel.OpenSeatingAvailable, @event.OpenSeatingAvailable);
+        }
+        [Fact]
+        public void ShouldNotAddEventDuplicate()
+        {
+            //Arrange
+            EventViewModel viewModel = new EventViewModel();
+            viewModel.EventName = "Test";
+            viewModel.VenueID = 1;
+            viewModel.DateTime = DateTime.Today.AddDays(1);
+            viewModel.OpenSeatingAvailable = true;
 
+            this.mockEventRepo.Setup(m => m.GetAllEvents()).Returns(CreateMockEvents());
+            this.mockVenueRepo.Setup(m => m.GetAllVenues()).Returns(CreateMockVenues());
+
+            Event @event = null;
+            this.mockEventRepo.Setup(m => m.AddEvent(It.IsAny<Event>())).Callback<Event>(e => @event = e);
+            //Act
+            this.controller.AddEvent(viewModel);
+
+            //Assert
+            this.mockEventRepo.Verify(m => m.AddEvent(It.IsAny<Event>()), Times.Never);
+            //Assert.Null(@event);
+            Assert.Contains("An event at this location and date/time already exists!", controller.ModelState.SelectMany(x => x.Value.Errors).Select(e => e.ErrorMessage));
+
+        }
+        [Fact]
+        public void ShouldNotAddEventPast()
+        {
+            //Arrange
+            EventViewModel viewModel = new EventViewModel();
+            viewModel.EventName = "Test";
+            viewModel.VenueID = 1;
+            viewModel.DateTime = new DateTime(2025, 01, 01);
+            viewModel.OpenSeatingAvailable = true;
+
+            this.mockEventRepo.Setup(m => m.GetAllEvents()).Returns(CreateMockEvents());
+            this.mockVenueRepo.Setup(m => m.GetAllVenues()).Returns(CreateMockVenues());
+
+            Event @event = null;
+            this.mockEventRepo.Setup(m => m.AddEvent(It.IsAny<Event>())).Callback<Event>(e => @event = e);
+            //Act
+            this.controller.AddEvent(viewModel);
+
+            //Assert
+            this.mockEventRepo.Verify(m => m.AddEvent(It.IsAny<Event>()), Times.Never);
+            Assert.Null(@event);
+            Assert.Contains("The date/time of this event is in the past!", controller.ModelState.SelectMany(x => x.Value.Errors).Select(e => e.ErrorMessage));
+
+        }
+        [Fact]
+        public void ShouldNotAddEventInvalidData()
+        {
+            //Arrange
+            EventViewModel viewModel = new EventViewModel();
+            List<ValidationResult> results = new List<ValidationResult>();
+            //Act
+            bool isValid = Validator.TryValidateObject(viewModel, new ValidationContext(viewModel), results);
+            //Assert
+            Assert.False(isValid);
+            Assert.Equal("The EventName field is required.", results.First().ErrorMessage);
         }
     }
 }
