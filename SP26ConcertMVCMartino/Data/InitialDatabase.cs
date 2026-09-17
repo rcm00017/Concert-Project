@@ -10,11 +10,36 @@ namespace SP26ConcertMVCMartino.Data
         {
             ApplicationDbContext database = services.GetRequiredService<ApplicationDbContext>();
             UserManager<AppUser> userManager = services.GetRequiredService<UserManager<AppUser>>();
+            RoleManager<IdentityRole> roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+            if (!database.Roles.Any())
+            {
+                IdentityRole role = new IdentityRole("Customer");
+                roleManager.CreateAsync(role).Wait();
+
+                role = new IdentityRole("Employee");
+                roleManager.CreateAsync(role).Wait();
+
+                role = new IdentityRole("Admin");
+                roleManager.CreateAsync(role).Wait();
+            }
 
             if (!database.AppUsers.Any())
             {
                 AppUser customer = new AppUser("Test.Customer1@test.com", "Test.Customer1", "Ryan", "Martino");
                 userManager.CreateAsync(customer).Wait();
+                userManager.AddToRoleAsync(customer, "Customer").Wait();
+
+
+                customer = new AppUser("Test.Employee1@test.com", "Test.Employee1", "John", "Helldiver");
+                userManager.CreateAsync(customer).Wait();
+                userManager.AddToRoleAsync(customer, "Employee").Wait();
+
+
+                customer = new AppUser("Test.Admin1@test.com", "Test.Admin1", "Jane", "Smith");
+                userManager.CreateAsync(customer).Wait();
+                userManager.AddToRolesAsync(customer, new List<string>{ "Admin", "Employee" }).Wait();
+
             }
             if (!database.Venues.Any())
             {

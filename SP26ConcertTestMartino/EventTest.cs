@@ -286,5 +286,103 @@ namespace SP26ConcertTestMartino
             Assert.False(isValid);
             Assert.Equal("The EventName field is required.", results.First().ErrorMessage);
         }
+        [Fact]
+        public void ShouldEditEvent()
+        {
+            //Arrange
+            EventViewModel viewModel = new EventViewModel();
+            viewModel.EventName = "Test";
+            viewModel.VenueID = 1;
+            viewModel.DateTime = DateTime.Now.AddDays(1);
+            viewModel.OpenSeatingAvailable = true;
+            viewModel.EventID = 1;
+
+            this.mockEventRepo.Setup(m => m.GetAllEvents()).Returns(CreateMockEvents());
+            this.mockVenueRepo.Setup(m => m.GetAllVenues()).Returns(CreateMockVenues());
+
+            Venue venue = new Venue("Test", "Line1", "Line2", "C", "S", "Z", "C", VenueType.Outdoor, 100);
+            venue.VenueID = 1;
+            Event existing = new Event(venue, "TestEvent", DateTime.Now.AddDays(2), true, 10m);
+            existing.EventID = 1;
+            
+            this.mockEventRepo.Setup(m => m.FindEvent(viewModel.EventID)).Returns(existing);
+            //Act
+            this.controller.EditEvent(viewModel);
+
+            //Assert
+            this.mockEventRepo.Verify(m => m.EditEvent(It.IsAny<Event>()), Times.Once);
+            Assert.Equal(viewModel.EventName, existing.EventName);
+            Assert.Equal(viewModel.DateTime, existing.DateTime);
+            Assert.Equal(viewModel.VenueID, existing.Venue.VenueID);
+            Assert.Equal(viewModel.OpenSeatingAvailable, existing.OpenSeatingAvailable);
+        }
+        [Fact]
+        public void ShouldNotEditEventDuplicate()
+        {
+            //Arrange
+            EventViewModel viewModel = new EventViewModel();
+            viewModel.EventName = "Test";
+            viewModel.VenueID = 1;
+            viewModel.DateTime = DateTime.Now.AddDays(1);
+            viewModel.OpenSeatingAvailable = true;
+            viewModel.EventID = 1;
+
+            this.mockVenueRepo.Setup(m => m.GetAllVenues()).Returns(CreateMockVenues());
+
+            Venue venue = new Venue("Test", "Line1", "Line2", "C", "S", "Z", "C", VenueType.Outdoor, 100);
+            venue.VenueID = 1;
+
+            List<Event> existingEvents = new List<Event>();
+           
+            Event existing = new Event(venue, "TestEvent", DateTime.Now.AddDays(2), true, 10m);
+            existing.EventID = 1;
+            existingEvents.Add(existing);
+
+            Event existing2 = new Event(venue, "TestEvent2", DateTime.Now.AddDays(1), true, 10m);
+            existing2.EventID = 2;
+            existingEvents.Add(existing2);
+
+            this.mockEventRepo.Setup(m => m.GetAllEvents()).Returns(existingEvents);
+
+
+            this.mockEventRepo.Setup(m => m.FindEvent(viewModel.EventID)).Returns(existing);
+            //Act
+            this.controller.EditEvent(viewModel);
+
+            //Assert
+            this.mockEventRepo.Verify(m => m.EditEvent(It.IsAny<Event>()), Times.Never);
+
+            Assert.Contains("An event at this location and date/time already exists!", controller.ModelState.SelectMany(x => x.Value.Errors).Select(e => e.ErrorMessage));
+
+        }
+        [Fact]
+        public void ShouldNotEditEventEventPassed()
+        {
+            //Arrange
+            EventViewModel viewModel = new EventViewModel();
+            viewModel.EventName = "Test";
+            viewModel.VenueID = 1;
+            viewModel.DateTime = DateTime.Now.AddDays(1);
+            viewModel.OpenSeatingAvailable = true;
+            viewModel.EventID = 1;
+
+            this.mockEventRepo.Setup(m => m.GetAllEvents()).Returns(CreateMockEvents());
+            this.mockVenueRepo.Setup(m => m.GetAllVenues()).Returns(CreateMockVenues());
+
+            Venue venue = new Venue("Test", "Line1", "Line2", "C", "S", "Z", "C", VenueType.Outdoor, 100);
+            venue.VenueID = 1;
+            Event existing = new Event(venue, "TestEvent", new DateTime(2026, 01, 01), true, 10m);
+            existing.EventID = 1;
+
+            this.mockEventRepo.Setup(m => m.FindEvent(viewModel.EventID)).Returns(existing);
+            //Act
+            this.controller.EditEvent(viewModel);
+
+            //Assert
+            this.mockEventRepo.Verify(m => m.EditEvent(It.IsAny<Event>()), Times.Never);
+
+            Assert.Contains("This event has already taken place!", controller.ModelState.SelectMany(x => x.Value.Errors).Select(e => e.ErrorMessage));
+
+        }
     }
 }

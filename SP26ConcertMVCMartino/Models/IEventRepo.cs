@@ -7,5 +7,9 @@ namespace SP26ConcertMVCMartino.Models
     {
         public List<Event> GetAllEvents();
         public int AddEvent(Event @event);
+        public Event FindEvent(int eventID);
+
+        public void EditEvent(Event @event);
+
     }
 }

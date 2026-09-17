@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SP26ConcertClassLibraryMartino;
 using SP26ConcertMVCMartino.Models;
@@ -91,6 +93,8 @@ namespace SP26ConcertMVCMartino.Controllers
         //HTTP DELETE = DELETE
         //HTTP PUT = UPDATE
         [HttpGet]
+        [Authorize] //must be logged in
+
         public IActionResult AddEvent(int? VenueID)
         {
             //Present the user with a form
@@ -104,6 +108,8 @@ namespace SP26ConcertMVCMartino.Controllers
             return View(viewModel);
         }
         [HttpPost] // Submit Button
+        [Authorize] //must be logged in
+
         public IActionResult AddEvent(EventViewModel viewModel)
         {
             //Input Validation
@@ -113,12 +119,11 @@ namespace SP26ConcertMVCMartino.Controllers
             }
 
 
-
             //Venue cannot have 2 events at the same time 
 
             //Venue cannot have 2 events at the same time with the same name (duplicate)
-            
-                List<Event> events = this.iEventRepo.GetAllEvents();
+
+            List<Event> events = this.iEventRepo.GetAllEvents();
             if (events.Any(e => e.Venue.VenueID == viewModel.VenueID && e.DateTime != null && e.DateTime == viewModel.DateTime))
             {
                 //ERROR
@@ -144,10 +149,113 @@ namespace SP26ConcertMVCMartino.Controllers
 
             //Save in DB
             int eventID = this.iEventRepo.AddEvent(@event);
+            @event.EventName = viewModel.EventName;
+            @event.DateTime = viewModel.DateTime;
+            @event.GeneralAdmissionPrice = price;
+            @event.OpenSeatingAvailable = viewModel.OpenSeatingAvailable;
+            @event.Venue = venue;
 
 
             //Return a success
             return RedirectToAction("SearchEvents");
         }
-    }//Class
+        [HttpGet]
+        [Authorize(Roles = "Employee")] //must be logged in
+        public IActionResult EditEvent(int eventID)
+        {
+            if (eventID < 1)
+            {
+                return RedirectToAction("SearchEvents");
+            }
+            //Present the user with a form
+            EventViewModel viewModel = new EventViewModel();
+            Event @event = this.iEventRepo.FindEvent(eventID);
+
+            if (@event == null)
+            {
+                return RedirectToAction("SearchEvents");
+            }
+
+            viewModel.EventName = @event.EventName;
+            viewModel.DateTime = @event.DateTime;
+            viewModel.GeneralAdmissionPrice = @event.GeneralAdmissionPrice;
+            viewModel.OpenSeatingAvailable = @event.OpenSeatingAvailable;
+            viewModel.VenueID = @event.Venue.VenueID;
+            viewModel.EventID = @event.EventID;
+
+            CreateDropdowns();
+            //User fills out the form    
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Employee")] //must be logged in
+
+        public IActionResult EditEvent(EventViewModel viewModel)
+        {
+            //Input Validation
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
+
+
+            //Venue cannot have 2 events at the same time 
+
+            //Venue cannot have 2 events at the same time with the same name (duplicate)
+
+            List<Event> events = this.iEventRepo.GetAllEvents();
+            if (events.Any(e => e.EventID != viewModel.EventID && e.Venue.VenueID == viewModel.VenueID && e.DateTime != null && e.DateTime.Value.Year == viewModel.DateTime.Value.Year && e.DateTime.Value.Month == viewModel.DateTime.Value.Month && e.DateTime.Value.Day == viewModel.DateTime.Value.Day && e.DateTime.Value.Hour == viewModel.DateTime.Value.Hour))
+            {
+                //ERROR
+                ModelState.AddModelError("Duplicate", "An event at this location and date/time already exists!");
+                return View(viewModel);
+            }
+            if (viewModel.DateTime <= DateTime.Now)
+            {
+                ModelState.AddModelError("EventPast", "The date/time of this event is in the past!!");
+                return View(viewModel);
+            }
+
+
+            //edit event
+            decimal price = -1.0m;
+            if (viewModel.GeneralAdmissionPrice != null)
+            {
+                price = viewModel.GeneralAdmissionPrice.Value;
+            }
+
+            Venue venue = this.iVenueRepo.GetAllVenues().Where(v => v.VenueID == viewModel.VenueID).FirstOrDefault();
+
+
+            //
+            Event @event = this.iEventRepo.FindEvent(viewModel.EventID);
+
+            if (@event == null)
+            {
+                return RedirectToAction("SearchEvents");
+            }
+            //Event should not be in the past
+            if (@event.DateTime <= DateTime.Now)
+            {
+                ModelState.AddModelError("Duplicate", "This event has already taken place!");
+                return View(viewModel);
+            }
+            
+
+            @event.EventName = viewModel.EventName; 
+            @event.DateTime = viewModel.DateTime;
+            @event.GeneralAdmissionPrice = price;
+            @event.OpenSeatingAvailable = viewModel.OpenSeatingAvailable;
+            @event.Venue = venue;
+
+            // Save in DB
+            this.iEventRepo.EditEvent(@event);
+            //Return a success
+            return RedirectToAction("SearchEvents");
+
+
+            return View();
+        }
+        }//Class
 }//Namespace

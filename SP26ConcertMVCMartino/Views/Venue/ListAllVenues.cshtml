@@ -14,7 +14,10 @@
             <th>Capacity</th>
             <th>Next Event</th>
             <th># of Events</th>
-            <th>New Event</th>
+            @if (User.IsInRole("Employee"))
+            {
+             <th>New Event</th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -53,14 +56,17 @@
                     
                     
                 </td>
+                @if (User.IsInRole("Employee")) {
+                    <td>
+                        <a class="btn btn-success" asp-controller="Event" asp-action="AddEvent" asp-route-VenueID="@currentVenue.VenueID">New Event</a>
+                </td>
+                }
             </tr>
         }
         <tr>
             
 
-            <td>
-                <a class="btn btn-success" asp-controller="Event" asp-action="AddEvent" asp-route-VenueID="@currentVenue.VenueID">New Event</a>
-            </td>
+            
         </tr>
     </tbody>
 </table>

@@ -77,6 +77,11 @@
         <th> Date Time</th>
         <th> Event Name</th>
         <th>Artist(s)</th>
+        <th>Venue</th>
+        @if (User.IsInRole("Employee"))
+        {
+            <th>Actions</th>
+        }
         </tr>
     </thead>
     <tbody>
@@ -114,7 +119,12 @@
                             <p>@currentEvent.Venue.AddressFriendlyName</p>
 
                         </td>
-                        
+                           @if (User.IsInRole("Employee"))    
+                           {
+                            <td>
+                                <a class="btn btn-warning" asp-controller="Event" asp-action="EditEvent" asp-route-eventID="@currentEvent.EventID">Edit Event</a>
+                        </td>
+                        }
                         
             </tr>
         }

@@ -5,6 +5,7 @@ namespace SP26ConcertMVCMartino.ViewModels
 {
     public class EventViewModel
     {
+        public int EventID { get; set; }
         [Required]
         public string EventName { get; set; }
         public DateTime? DateTime { get; set; }

@@ -1,0 +1,44 @@
+﻿@model EventViewModel
+<h1>Edit Event</h1>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+<form asp-controller="Event" asp-action="EditEvent" method="post">
+    <input type="hidden" asp-for="EventID" />
+    <div class="form-group">
+        <label class="form-label">Event Name</label>
+        <input class="form-control" asp-for="EventName" />
+
+
+    </div>
+    <div class="form-group">
+        <label class="form-label">Date/Time</label>
+        <input class="form-control" asp-for="DateTime" />
+
+
+    </div>
+    <div class="form-group">
+        <label class="form-label">Open Seating?</label>
+        <input class="form-control-check-input" asp-for="OpenSeatingAvailable" type="checkbox" />
+
+
+    </div>
+    <div class="form-group">
+        <label class="form-label">General Admission Price</label>
+        <input class="form-control" asp-for="GeneralAdmissionPrice" />
+
+
+    </div>
+    <div class="form-group">
+        <label class="form-label"> Venue</label>
+        <select class="form-control" asp-for="VenueID" asp-items="@ViewBag.VenueDropdown">
+        </select>
+
+
+    </div>
+    <br />
+    <button type="submit" class="btn btn-warning">Edit Event</button>
+
+
+
+</form>
+
