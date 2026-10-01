@@ -1,0 +1,58 @@
+﻿@model EventViewModel
+
+<h1>Confirm Delete Event?</h1>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+<form asp-controller="Event" asp-action="DeleteEvent" method="post">
+    <input type="hidden" asp-for="EventID" />
+
+    <div class="form-group">
+        <label class="form-label">Event Name</label>
+        <input class="form-control" asp-for="EventName" disabled/>
+        <input class="form-control" asp-for="EventName" type="hidden"/>
+
+
+
+
+    </div>
+    <div class="form-group">
+        <label class="form-label">Date/Time</label>
+        <input class="form-control" asp-for="DateTime" disabled/>
+        <input class="form-control" asp-for="DateTime" type="hidden"/>
+
+
+
+    </div>
+    <div class="form-group">
+        <label class="form-label">Open Seating?</label>
+        <input class="form-control-check-input" asp-for="OpenSeatingAvailable" type="checkbox" disabled />
+        <input class="form-control" asp-for="OpenSeatingAvailable" type="hidden"/>
+
+
+
+    </div>
+    <div class="form-group">
+        <label class="form-label">General Admission Price</label>
+        <input class="form-control" asp-for="GeneralAdmissionPrice" disabled/>
+        <input class="form-control" asp-for="GeneralAdmissionPrice" type="hidden"/>
+
+
+
+    </div>
+    <div class="form-group">
+        <label class="form-label"> Venue</label>
+        <select class="form-control" asp-for="VenueID" asp-items="@ViewBag.VenueDropdown" disabled>
+            
+
+        </select>
+        <select class="form-control" asp-for="VenueID" asp-items="@ViewBag.VenueDropdown" type="hidden">
+        </select>
+
+
+    </div>
+    <br />
+    <button type="submit" class="btn btn-danger">Delete Event</button>
+
+
+
+</form>

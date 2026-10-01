@@ -122,7 +122,11 @@
                            @if (User.IsInRole("Employee"))    
                            {
                             <td>
-                                <a class="btn btn-warning" asp-controller="Event" asp-action="EditEvent" asp-route-eventID="@currentEvent.EventID">Edit Event</a>
+                                <a class="btn btn-warning" asp-controller="Event" asp-action="EditEvent" asp-route-eventID="@currentEvent.EventID">Edit</a>
+                                @if(!(currentEvent.DateTime.Value <= DateTime.Now) || currentEvent.Tickets.Any())
+                                {
+                                <a class="btn btn-danger" asp-controller="Event" asp-action="ConfirmDeleteEvent" asp-route-eventID="@currentEvent.EventID">Delete</a>
+                                }
                         </td>
                         }
                         

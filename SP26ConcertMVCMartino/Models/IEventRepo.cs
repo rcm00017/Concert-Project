@@ -10,6 +10,7 @@ namespace SP26ConcertMVCMartino.Models
         public Event FindEvent(int eventID);
 
         public void EditEvent(Event @event);
+        public void DeleteEvent(Event @event);
 
     }
 }

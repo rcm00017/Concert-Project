@@ -384,5 +384,71 @@ namespace SP26ConcertTestMartino
             Assert.Contains("This event has already taken place!", controller.ModelState.SelectMany(x => x.Value.Errors).Select(e => e.ErrorMessage));
 
         }
+
+        [Fact]
+        public void ShouldDeleteEvent()
+        {
+            //Arrange
+            EventViewModel viewModel = new EventViewModel();
+            
+            viewModel.EventID = 1;
+
+            Venue venue = new Venue("Test", "Line1", "Line2", "C", "S", "Z", "C", VenueType.Outdoor, 100);
+            venue.VenueID = 1;
+            Event existing = new Event(venue, "TestEvent", DateTime.Now.AddDays(1), true, 10m);
+            existing.EventID = 1;
+
+            this.mockEventRepo.Setup(m => m.FindEvent(viewModel.EventID)).Returns(existing);
+            //Act
+            this.controller.DeleteEvent(viewModel);
+
+            //Assert
+            //Delete correct event
+            this.mockEventRepo.Verify(m => m.DeleteEvent(existing), Times.Once);
+            //Delete one event
+            this.mockEventRepo.Verify(m => m.DeleteEvent(It.IsAny<Event>()), Times.Once);
+
+        }
+        [Fact]
+        public void ShouldNotDeleteEventPast()
+        {
+            //Arrange
+            EventViewModel viewModel = new EventViewModel();
+
+            viewModel.EventID = 1;
+
+            Venue venue = new Venue("Test", "Line1", "Line2", "C", "S", "Z", "C", VenueType.Outdoor, 100);
+            venue.VenueID = 1;
+            Event existing = new Event(venue, "TestEvent", new DateTime(2026, 01, 01), true, 10m);
+            existing.EventID = 1;
+
+            this.mockEventRepo.Setup(m => m.FindEvent(viewModel.EventID)).Returns(existing);
+            //Act
+            this.controller.DeleteEvent(viewModel);
+
+            //Assert
+            this.mockEventRepo.Verify(m => m.DeleteEvent(It.IsAny<Event>()), Times.Never);
+        }
+        [Fact]
+        public void ShouldNotDeleteEventTicketsSold()
+        {
+            //Arrange
+            EventViewModel viewModel = new EventViewModel();
+
+            viewModel.EventID = 1;
+
+            Venue venue = new Venue("Test", "Line1", "Line2", "C", "S", "Z", "C", VenueType.Outdoor, 100);
+            venue.VenueID = 1;
+            Event existing = new Event(venue, "TestEvent", DateTime.Now.AddDays(2), true, 10m);
+            existing.EventID = 1;
+            existing.Tickets.Add(new Ticket(new AppUser(), existing, true, 100m));
+
+            this.mockEventRepo.Setup(m => m.FindEvent(viewModel.EventID)).Returns(existing);
+            //Act
+            this.controller.DeleteEvent(viewModel);
+
+            //Assert
+            this.mockEventRepo.Verify(m => m.DeleteEvent(It.IsAny<Event>()), Times.Never);
+        }
     }
 }

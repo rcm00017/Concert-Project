@@ -238,7 +238,7 @@ namespace SP26ConcertMVCMartino.Controllers
             //Event should not be in the past
             if (@event.DateTime <= DateTime.Now)
             {
-                ModelState.AddModelError("Duplicate", "This event has already taken place!");
+                ModelState.AddModelError("EventPast", "This event has already taken place!");
                 return View(viewModel);
             }
             
@@ -257,5 +257,74 @@ namespace SP26ConcertMVCMartino.Controllers
 
             return View();
         }
-        }//Class
+
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")] //must be logged in
+        public IActionResult ConfirmDeleteEvent(int eventID)
+        {
+            if (eventID < 1)
+            {
+                return RedirectToAction("SearchEvents");
+            }
+            //Present the user with a form
+            EventViewModel viewModel = new EventViewModel();
+            Event @event = this.iEventRepo.FindEvent(eventID);
+
+            if (@event == null)
+            {
+                return RedirectToAction("SearchEvents");
+            }
+
+            viewModel.EventName = @event.EventName;
+            viewModel.DateTime = @event.DateTime;
+            viewModel.GeneralAdmissionPrice = @event.GeneralAdmissionPrice;
+            viewModel.OpenSeatingAvailable = @event.OpenSeatingAvailable;
+            viewModel.VenueID = @event.Venue.VenueID;
+            viewModel.EventID = @event.EventID;
+
+            CreateDropdowns();
+            //User fills out the form    
+            return View(viewModel);
+        }
+
+        [Authorize(Roles = "Admin")] //must be logged in
+
+        public IActionResult DeleteEvent(EventViewModel viewModel)
+        {
+            //Input Validation
+            if (viewModel.EventID < 1)
+            {
+                return RedirectToAction("SearchEvents");
+            }
+
+            //Find existing event
+            Event @event = this.iEventRepo.FindEvent(viewModel.EventID);
+
+            if (@event == null)
+            {
+                return RedirectToAction("SearchEvents");
+            }
+            //Event should not be in the past
+            if (@event.DateTime <= DateTime.Now)
+            {
+                ModelState.AddModelError("EventPast", "This event has already taken place!");
+                return View("ConfirmDeleteEvent",viewModel);
+            }
+            //If any tickets sold, cannot delete event
+            if(@event.Tickets.Any())
+            {
+                ModelState.AddModelError("TicketsSold", "Cannot delete an event with tickets sold!");
+                return View(viewModel);
+            }
+
+            //Delete Record
+            this.iEventRepo.DeleteEvent(@event);
+
+
+            //Return the user somewhere
+            return RedirectToAction("SearchEvents");
+        }
+
+    }//Class
 }//Namespace

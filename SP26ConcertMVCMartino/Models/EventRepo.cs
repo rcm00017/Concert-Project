@@ -21,6 +21,12 @@ namespace SP26ConcertMVCMartino.Models
             return @event.EventID;
         }
 
+        public void DeleteEvent(Event @event)
+        {
+            this.database.Events.Remove(@event);
+            this.database.SaveChanges();
+        }
+
         public void EditEvent(Event @event)
         {
             this.database.Events.Update(@event);
