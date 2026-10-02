@@ -1,0 +1,53 @@
+﻿@model Event
+
+<h1>@Model.EventName</h1>
+
+<h3>Event Details</h3>
+<table class="table table-bordered-striped">
+    <tr>
+        <td>Date</td>
+        @if(Model.DateTime.HasValue)
+        {
+            <td>@Model.DateTime</td>
+        }
+        else
+        {
+            <td>TBD</td>
+            
+        }
+    </tr>
+    <tr>
+        <td>General Admission Price</td>
+        <td>@Model.GeneralAdmissionPrice.ToString("C")</td>
+
+
+    </tr>
+</table>
+
+<h3> Venue Information</h3>
+
+<div>
+
+    <p>@Model.Venue.VenueName</p>
+    <p>@Model.Venue.AddressFriendlyName</p>
+    <p><b>Capacity:</b> @Model.Venue.Capacity</p>
+
+</div>
+<h3>Artists</h3>
+
+<div>
+    @if (!Model.Artists.Any())
+    {
+        <p>Artist TBD</p>  
+    }
+    else
+    {
+        <ul>
+        @foreach (Artist artist in Model.Artists)
+        {
+            <li>@artist.FullName</li>
+        }
+        </ul>
+    }
+
+</div>

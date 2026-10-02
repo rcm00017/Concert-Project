@@ -37,7 +37,7 @@ namespace SP26ConcertMVCMartino.Models
 
         public Event FindEvent(int eventID)
         {
-            return this.database.Events.Include(e => e.Venue).Where(e => e.EventID == eventID).FirstOrDefault();
+            return this.database.Events.Include(e => e.Venue).Include(e =>e.Artists).Where(e => e.EventID == eventID).FirstOrDefault();
         }
 
         public List<Event> GetAllEvents()

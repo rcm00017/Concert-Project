@@ -78,6 +78,7 @@
         <th> Event Name</th>
         <th>Artist(s)</th>
         <th>Venue</th>
+        <th>Details</th>
         @if (User.IsInRole("Employee"))
         {
             <th>Actions</th>
@@ -97,7 +98,12 @@
                   <td>TBD</td>
 
                 }
-                <td>@currentEvent.EventName</td>
+                
+                <td>
+                    <a asp-controller="Event" asp-action="ViewEventDetails" asp-route-eventID="@currentEvent.EventID">
+                    @currentEvent.EventName
+                    </a>
+                </td>
                         <td>
                             @if (currentEvent.Artists.Any())
                             {

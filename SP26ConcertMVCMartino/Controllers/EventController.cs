@@ -325,6 +325,23 @@ namespace SP26ConcertMVCMartino.Controllers
             //Return the user somewhere
             return RedirectToAction("SearchEvents");
         }
+        public IActionResult ViewEventDetails(int EventID)
+        {
+            //Retrieve the event from the database
+            if(EventID < 1)
+            {
+                return RedirectToAction("SearchEvents");
+            }
+            Event @event = this.iEventRepo.FindEvent(EventID);
+
+            if (@event == null)
+            {
+                return RedirectToAction("SearchEvents");
+            }
+
+            //Send the event to the view
+            return View(@event);
+        }
 
     }//Class
 }//Namespace
