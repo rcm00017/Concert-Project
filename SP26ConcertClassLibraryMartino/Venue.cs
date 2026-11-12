@@ -39,6 +39,7 @@ namespace SP26ConcertClassLibraryMartino
 
         //MANY = LIST relationship between tables
         public List<Event> Events { get; set; } = new List<Event>();
+        public List<Section> Sections { get; set; } = new List<Section>();
 
         //LIST = NULL or EMPTY
 

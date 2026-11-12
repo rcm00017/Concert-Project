@@ -332,6 +332,98 @@ namespace SP26ConcertMVCMartino.Data.Migrations
                     b.ToTable("Genres");
                 });
 
+            modelBuilder.Entity("SP26ConcertClassLibraryMartino.Row", b =>
+                {
+                    b.Property<int>("RowID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RowID"));
+
+                    b.Property<string>("RowName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SectionID")
+                        .HasColumnType("int");
+
+                    b.HasKey("RowID");
+
+                    b.HasIndex("SectionID");
+
+                    b.ToTable("Rows");
+                });
+
+            modelBuilder.Entity("SP26ConcertClassLibraryMartino.Seat", b =>
+                {
+                    b.Property<int>("SeatID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SeatID"));
+
+                    b.Property<int>("RowID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SeatName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SeatID");
+
+                    b.HasIndex("RowID");
+
+                    b.ToTable("Seats");
+                });
+
+            modelBuilder.Entity("SP26ConcertClassLibraryMartino.SeatPrice", b =>
+                {
+                    b.Property<int>("SeatPriceID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SeatPriceID"));
+
+                    b.Property<int>("EventID")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("SeatID")
+                        .HasColumnType("int");
+
+                    b.HasKey("SeatPriceID");
+
+                    b.HasIndex("EventID");
+
+                    b.HasIndex("SeatID");
+
+                    b.ToTable("SeatPrices");
+                });
+
+            modelBuilder.Entity("SP26ConcertClassLibraryMartino.Section", b =>
+                {
+                    b.Property<int>("SectionID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SectionID"));
+
+                    b.Property<string>("SectionName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VenueID")
+                        .HasColumnType("int");
+
+                    b.HasKey("SectionID");
+
+                    b.HasIndex("VenueID");
+
+                    b.ToTable("Sections");
+                });
+
             modelBuilder.Entity("SP26ConcertClassLibraryMartino.Ticket", b =>
                 {
                     b.Property<int>("TicketID")
@@ -353,11 +445,16 @@ namespace SP26ConcertMVCMartino.Data.Migrations
                     b.Property<bool>("Paid")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("SeatID")
+                        .HasColumnType("int");
+
                     b.HasKey("TicketID");
 
                     b.HasIndex("AppUserId");
 
                     b.HasIndex("EventID");
+
+                    b.HasIndex("SeatID");
 
                     b.ToTable("Tickets");
                 });
@@ -533,6 +630,58 @@ namespace SP26ConcertMVCMartino.Data.Migrations
                     b.Navigation("Venue");
                 });
 
+            modelBuilder.Entity("SP26ConcertClassLibraryMartino.Row", b =>
+                {
+                    b.HasOne("SP26ConcertClassLibraryMartino.Section", "Section")
+                        .WithMany("Rows")
+                        .HasForeignKey("SectionID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Section");
+                });
+
+            modelBuilder.Entity("SP26ConcertClassLibraryMartino.Seat", b =>
+                {
+                    b.HasOne("SP26ConcertClassLibraryMartino.Row", "Row")
+                        .WithMany("Seats")
+                        .HasForeignKey("RowID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Row");
+                });
+
+            modelBuilder.Entity("SP26ConcertClassLibraryMartino.SeatPrice", b =>
+                {
+                    b.HasOne("SP26ConcertClassLibraryMartino.Event", "Event")
+                        .WithMany("SeatPrices")
+                        .HasForeignKey("EventID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SP26ConcertClassLibraryMartino.Seat", "Seat")
+                        .WithMany("SeatPrices")
+                        .HasForeignKey("SeatID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+
+                    b.Navigation("Seat");
+                });
+
+            modelBuilder.Entity("SP26ConcertClassLibraryMartino.Section", b =>
+                {
+                    b.HasOne("SP26ConcertClassLibraryMartino.Venue", "Venue")
+                        .WithMany("Sections")
+                        .HasForeignKey("VenueID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Venue");
+                });
+
             modelBuilder.Entity("SP26ConcertClassLibraryMartino.Ticket", b =>
                 {
                     b.HasOne("SP26ConcertClassLibraryMartino.AppUser", "AppUser")
@@ -547,19 +696,46 @@ namespace SP26ConcertMVCMartino.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("SP26ConcertClassLibraryMartino.Seat", "Seat")
+                        .WithMany("Tickets")
+                        .HasForeignKey("SeatID");
+
                     b.Navigation("AppUser");
 
                     b.Navigation("Event");
+
+                    b.Navigation("Seat");
                 });
 
             modelBuilder.Entity("SP26ConcertClassLibraryMartino.Event", b =>
                 {
+                    b.Navigation("SeatPrices");
+
                     b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("SP26ConcertClassLibraryMartino.Row", b =>
+                {
+                    b.Navigation("Seats");
+                });
+
+            modelBuilder.Entity("SP26ConcertClassLibraryMartino.Seat", b =>
+                {
+                    b.Navigation("SeatPrices");
+
+                    b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("SP26ConcertClassLibraryMartino.Section", b =>
+                {
+                    b.Navigation("Rows");
                 });
 
             modelBuilder.Entity("SP26ConcertClassLibraryMartino.Venue", b =>
                 {
                     b.Navigation("Events");
+
+                    b.Navigation("Sections");
                 });
 
             modelBuilder.Entity("SP26ConcertClassLibraryMartino.AppUser", b =>

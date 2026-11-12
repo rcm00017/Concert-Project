@@ -20,13 +20,15 @@ namespace SP26ConcertClassLibraryMartino
         [Required]
         public Event Event { get; set; }
 
-        public Ticket(AppUser user, Event @event, bool paid, decimal cost)
+        public Seat? Seat { get; set; }
+
+        public Ticket(AppUser user, Event @event, bool paid, decimal cost, Seat? seat = null)
         {
             this.AppUser = user;
             this.Event = @event;
             this.Paid = paid;
             this.Cost = cost;
-
+            Seat = seat;
         }
         public Ticket()
         {

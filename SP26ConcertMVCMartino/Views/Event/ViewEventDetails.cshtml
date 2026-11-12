@@ -3,6 +3,7 @@
 <h1>@Model.EventName</h1>
 
 <h3>Event Details</h3>
+<a asp-controller="Ticket" asp-action="ConfirmPurchaseTicket" asp-route-eventID="@Model.EventID" class="btn btn-success">Purchase Ticket</a>
 <table class="table table-bordered-striped">
     <tr>
         <td>Date</td>

@@ -28,6 +28,7 @@ namespace SP26ConcertClassLibraryMartino
 
         public List<Ticket> Tickets { get; set; } = new List<Ticket>();
         public List<Artist> Artists { get; set; } = new List<Artist>();
+        public List<SeatPrice> SeatPrices { get; set; } = new List<SeatPrice>();
 
         public Event(Venue venue, string eventName, DateTime? dateTime, bool openSeatingAvailable, decimal generalAdmissionPrice)
         {

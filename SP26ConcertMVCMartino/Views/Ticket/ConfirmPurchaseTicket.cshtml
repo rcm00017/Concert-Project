@@ -1,0 +1,14 @@
+﻿@model PurchaseTicketViewModel
+
+<h1>Confirm Purchase?</h1>
+
+<form asp-controller="Ticket" asp-action="PurchaseTicket" method="post">
+<input type="hidden" asp-for="EventID" />
+<input asp-for="EventName" readonly />
+<input asp-for="EventDateTime" readonly />
+<input asp-for="Price" readonly />
+
+<a asp-controller="Event" asp-action="SearchEvents" class="btn btn-secondary">Cancel</a>
+<button type="submit" class="btn btn-primary">Confirm</button>
+
+</form>

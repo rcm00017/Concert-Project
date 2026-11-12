@@ -21,6 +21,8 @@ builder.Services.AddTransient<IVenueRepo,  VenueRepo>();
 builder.Services.AddTransient<IEventRepo, EventRepo>();
 builder.Services.AddTransient<IArtistRepo, ArtistRepo>();
 builder.Services.AddTransient<IGenreRepo, GenreRepo>();
+builder.Services.AddTransient<ITicketRepo, TicketRepo>();
+builder.Services.AddTransient<IAppUserRepo, AppUserRepo>();
 
 var app = builder.Build();
 
